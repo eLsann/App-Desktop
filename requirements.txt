@@ -1,0 +1,132 @@
+# =============================================================================
+# REQUIREMENTS.TXT - ABSENSI DESKTOP ENHANCED
+# =============================================================================
+# Python 3.11+ Compatible with Docker API Integration
+# =============================================================================
+
+# Core GUI Framework
+PySide6==6.7.2
+
+# Computer Vision & Image Processing
+opencv-python==4.10.0.84
+mediapipe==0.10.14
+
+# Data Processing (compatible with Python 3.11)
+numpy>=1.24.0,<3.0.0
+
+# HTTP Client Library with enhanced features
+requests==2.32.3
+urllib3>=2.0.0
+
+# Environment Configuration
+python-dotenv==1.0.1
+
+# Text-to-Speech Engine
+edge-tts==6.1.12
+
+# VLC Media Player Integration
+python-vlc==3.0.20123
+
+# Enhanced Features Support
+Pillow>=10.0.0
+packaging>=23.0.0
+
+# Optional: Performance Monitoring (uncomment if needed)
+# psutil==5.9.6
+# memory-profiler==0.61.0
+
+# =============================================================================
+# COMPATIBILITY MATRIX
+# =============================================================================
+# Python Version: 3.11+ (Recommended: 3.11.9)
+# Operating System: Windows 10/11 (Primary), Linux/Mac (Secondary)
+# Architecture: x64
+# Docker: Compatible with Docker Desktop
+
+# =============================================================================
+# ENHANCED FEATURES REQUIREMENTS
+# =============================================================================
+# - Camera Selection: OpenCV, PySide6
+# - Mirror Mode: OpenCV, PySide6
+# - Dataset Upload: Requests, Pillow
+# - Progress Tracking: PySide6, Threading
+# - Docker Integration: Requests, urllib3
+# - TTS Enhancement: edge-tts, python-vlc
+
+# =============================================================================
+# PERFORMANCE OPTIMIZATIONS
+# =============================================================================
+# - Python 3.11: 10-25% faster than 3.10
+# - NumPy 2.0+: Improved array operations
+# - PySide6 6.7: Latest Qt6 features
+# - MediaPipe 0.10: Optimized face detection
+# - OpenCV 4.10: Enhanced camera support
+
+# =============================================================================
+# INSTALLATION INSTRUCTIONS
+# =============================================================================
+# 1. Install Python 3.11.9 or later
+#    Download: https://www.python.org/downloads/release/python-3119/
+#
+# 2. Create virtual environment:
+#    python -m venv app.venv
+#
+# 3. Activate virtual environment:
+#    Windows: app.venv\Scripts\activate
+#    Linux/Mac: source app.venv/bin/activate
+#
+# 4. Install dependencies:
+#    pip install -r requirements.txt
+#
+# 5. Install VLC Media Player:
+#    Download: https://www.videolan.org/vlc/
+#    Install to: C:\Program Files\VideoLAN\VLC
+#
+# 6. Configure environment:
+#    copy .env.example .env
+#    Edit .env with your Docker API settings
+#
+# 7. Run application:
+#    python app.py (original features)
+#    python app_enhanced.py (enhanced features)
+
+# =============================================================================
+# TROUBLESHOOTING GUIDE
+# =============================================================================
+# Issue: PySide6 import error
+# Solution: pip install --upgrade PySide6
+#
+# Issue: MediaPipe TensorFlow conflict
+# Solution: pip install --upgrade mediapipe
+#
+# Issue: VLC not found
+# Solution: Install VLC to C:\Program Files\VideoLAN\VLC
+#
+# Issue: Camera not detected
+# Solution: Check camera index in .env (CAM_INDEX=0,1,2...)
+#
+# Issue: Docker API connection failed
+# Solution: Check Docker container: docker ps
+#
+# =============================================================================
+# VERSION HISTORY
+# =============================================================================
+# v1.0.0 - Initial setup with basic features
+# v1.1.0 - Enhanced features with Docker integration
+# v1.2.0 - Python 3.11 optimization
+# v1.3.0 - Enhanced UI and camera features
+
+# =============================================================================
+# SUPPORTED PYTHON VERSIONS
+# =============================================================================
+# Python 3.11.0 - 3.11.9 (Recommended)
+# Python 3.10.0 - 3.10.13 (Compatible)
+# Python 3.9.x (Not recommended)
+# Python <3.10 (Not supported)
+
+# =============================================================================
+# LAST UPDATED: 2026-01-09
+# =============================================================================
+# Status: Production Ready with Enhanced Features
+# Docker API Integration: Complete
+# Virtual Environment: Recommended

@@ -34,7 +34,7 @@ API_BASE=http://localhost:8000
 DEVICE_ID=stb-01
 DEVICE_TOKEN=token123
 CAMERA_INDEX=0
-EDGE_VOICE=id-ID-ArdiNeural
+EDGE_VOICE=id-ID-GadisNeural
 ```
 
 ## Menjalankan
