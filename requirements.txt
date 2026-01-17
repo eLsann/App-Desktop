@@ -9,7 +9,6 @@ PySide6==6.7.2
 
 # Computer Vision & Image Processing
 opencv-python==4.10.0.84
-mediapipe==0.10.14
 
 # Data Processing (compatible with Python 3.11)
 numpy>=1.24.0,<3.0.0
@@ -22,10 +21,11 @@ urllib3>=2.0.0
 python-dotenv==1.0.1
 
 # Text-to-Speech Engine
-edge-tts==6.1.12
+edge-tts>=7.0.0
 
-# VLC Media Player Integration
-python-vlc==3.0.20123
+# Audio Playback
+pygame>=2.5.0
+# python-vlc==3.0.20123  # Optional if using VLC backend instead of pygame
 
 # Enhanced Features Support
 Pillow>=10.0.0

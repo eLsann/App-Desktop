@@ -28,9 +28,15 @@ class LoggerSetup:
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         
-        # File handler with daily rotation
-        log_file = os.path.join(log_dir, f"absensi_{datetime.now().strftime('%Y%m%d')}.log")
-        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        # File handler with rotation (max 10MB, keep 5 files)
+        from logging.handlers import RotatingFileHandler
+        log_file = os.path.join(log_dir, f"absensi.log")
+        file_handler = RotatingFileHandler(
+            log_file, 
+            maxBytes=10*1024*1024, 
+            backupCount=5, 
+            encoding='utf-8'
+        )
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
         

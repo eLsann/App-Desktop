@@ -40,7 +40,7 @@ class TTSEngine:
         self._edge_available = True
         
         self._init_mixer()
-        self._init_pyttsx()
+        self._init_mixer()
         
         logger.info(f"TTS Engine initialized - Voice: {self.cfg.edge_voice}")
     
@@ -53,17 +53,6 @@ class TTSEngine:
             logger.info("Pygame mixer ready")
         except Exception as e:
             logger.warning(f"Pygame mixer failed: {e}")
-    
-    def _init_pyttsx(self):
-        """Initialize pyttsx3 as fallback"""
-        try:
-            import pyttsx3
-            self._pyttsx_engine = pyttsx3.init()
-            self._pyttsx_engine.setProperty('rate', 150)
-            self._pyttsx_engine.setProperty('volume', self.cfg.volume)
-            logger.info("pyttsx3 fallback ready")
-        except Exception as e:
-            logger.warning(f"pyttsx3 init failed: {e}")
     
     def _get_cache_path(self, text: str) -> Path:
         """Get cache file path based on text hash"""
@@ -90,7 +79,7 @@ class TTSEngine:
         threading.Thread(target=self._speak, args=(text,), daemon=True).start()
     
     def _speak(self, text: str):
-        """Speak text with Edge TTS or fallback"""
+        """Speak text with Edge TTS - NO FALLBACK"""
         cache_path = self._get_cache_path(text)
         
         # Try cache first
@@ -99,15 +88,15 @@ class TTSEngine:
             if self._play_audio(cache_path):
                 return
         
-        # Try Edge TTS
-        if self._edge_available:
+        # Try Edge TTS with retry
+        for attempt in range(3):
             success = self._try_edge_tts(text, cache_path)
             if success:
                 return
-        
-        # Fallback to pyttsx3
-        logger.info("Using pyttsx3 fallback")
-        self._speak_pyttsx(text)
+            time.sleep(1) # Wait before retry
+            
+        logger.error("TTS failed after 3 attempts - Check internet connection")
+        # No pyttsx3 fallback as requested
     
     def _try_edge_tts(self, text: str, cache_path: Path) -> bool:
         """Try generating audio with Edge TTS"""
@@ -117,11 +106,8 @@ class TTSEngine:
                 return self._play_audio(cache_path)
         except Exception as e:
             error_msg = str(e)
-            if "403" in error_msg:
-                logger.warning("Edge TTS rate limited, using fallback")
-                self._edge_available = False
-            else:
-                logger.error(f"Edge TTS error: {e}")
+            logger.warning(f"Edge TTS attempt failed: {error_msg}")
+            # Do NOT disable edge_available - always keep trying
         return False
     
     async def _generate_edge_tts(self, text: str, output_path: Path):
@@ -159,22 +145,8 @@ class TTSEngine:
                 pass
             return False
     
-    def _speak_pyttsx(self, text: str):
-        """Speak using pyttsx3 (local, always works)"""
-        if not self._pyttsx_engine:
-            return
-        try:
-            self._pyttsx_engine.say(text)
-            self._pyttsx_engine.runAndWait()
-        except Exception as e:
-            logger.error(f"pyttsx3 error: {e}")
-    
     def preload_common_greetings(self, names: list[str]):
-        """Pre-generate greetings (skipped if Edge TTS unavailable)"""
-        if not self._edge_available:
-            logger.info("Preload skipped - using pyttsx3 fallback")
-            return
-            
+        """Pre-generate greetings"""
         templates = [
             "Halo {name}, absensi masuk berhasil.",
             "Terima kasih {name}, absensi pulang berhasil.",
@@ -193,15 +165,13 @@ class TTSEngine:
                             count += 1
                             time.sleep(0.5)  # Rate limit delay
                         except Exception as e:
-                            if "403" in str(e):
-                                self._edge_available = False
-                                logger.warning("Preload stopped - rate limited")
-                                return
+                            logger.warning(f"Preload warning: {e}")
+                            
             if count > 0:
                 logger.info(f"Preloaded {count} audio files")
         
         threading.Thread(target=_preload, daemon=True).start()
-    
+
     def cleanup(self):
         """Cleanup resources"""
         try:
@@ -210,11 +180,5 @@ class TTSEngine:
                 pygame.mixer.quit()
         except:
             pass
-        
-        if self._pyttsx_engine:
-            try:
-                self._pyttsx_engine.stop()
-            except:
-                pass
         
         logger.info("TTS engine cleaned up")

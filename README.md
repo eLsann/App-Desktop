@@ -1,81 +1,175 @@
-# Absensi Desktop App
+<p align="center">
+  <h1 align="center">🖥️ Absensi Desktop</h1>
+  <p align="center">
+    <strong>Aplikasi Kiosk untuk Sistem Absensi Berbasis Pengenalan Wajah</strong>
+  </p>
+</p>
 
-Aplikasi kiosk profesional untuk sistem absensi berbasis pengenalan wajah. Dibangun dengan **Python (PySide6)** dan terintegrasi dengan backend FastAPI.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/PySide6-6.4+-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="PySide6">
+  <img src="https://img.shields.io/badge/OpenCV-4.8+-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" alt="OpenCV">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/Platform-Windows-blue?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=flat-square" alt="Status">
+</p>
+
+---
 
 ## ✨ Fitur Utama
 
-- **🎯 Real-time Face Detection** - Bounding box dengan animasi scan line
-- **👥 Multi-Face Recognition** - Deteksi hingga 5 wajah sekaligus
-- **🎤 Natural TTS** - Sapaan suara Indonesia (Microsoft Edge TTS)
-- **📊 Dual Mode** - Kiosk Mode + Admin Dashboard
-- **🔄 Offline Queue** - Data tersimpan saat offline, auto-sync saat online
-- **📡 Smart Reconnection** - Deteksi koneksi otomatis dengan indikator status
+| Fitur | Deskripsi |
+|-------|-----------|
+| 🎯 **Real-time Detection** | Bounding box dengan animasi scan line |
+| 👥 **Multi-Face** | Deteksi hingga 5 wajah sekaligus |
+| 🎤 **Natural TTS** | Sapaan suara Indonesia (Edge TTS) |
+| 🔄 **Smart Reconnection** | Auto-retry dengan status indicator |
+| 📡 **Offline Queue** | Data tersimpan saat offline |
+| 🎨 **Modern UI** | Animated buttons & hover effects |
 
-## 📁 Struktur Folder
+---
+
+## 🛠️ Tech Stack
+
+<table>
+<tr>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="40"/><br>Python</td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/qt/qt-original.svg" width="40"/><br>PySide6</td>
+<td align="center"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/opencv/opencv-original.svg" width="40"/><br>OpenCV</td>
+</tr>
+</table>
+
+### 📦 Libraries
 
 ```
-Absensi Desktop/
-├── app.py              # Main application
-├── ui.py               # UI layout & styling
-├── ui_components.py    # Animated button components
-├── api_client.py       # API communication
-├── camera.py           # Camera & face detection
-├── tts_engine.py       # Text-to-Speech
-├── settings_dialog.py  # Settings UI
-├── logger_config.py    # Logging config
-├── run_app.bat         # 1-click launcher
-├── requirements.txt    # Dependencies
-└── .env                # Configuration (create from .env.example)
+PySide6            # Modern Qt6 GUI framework
+opencv-python      # Computer vision & camera
+edge-tts           # Microsoft Edge Text-to-Speech
+requests           # HTTP client for API
+python-dotenv      # Environment configuration
 ```
+
+---
+
+## 🎨 UI Features
+
+### Status Colors (Bounding Box)
+| Warna | Status |
+|-------|--------|
+| ⬜ **Putih** | Scanning... |
+| 🟨 **Kuning** | Verifying... |
+| 🟩 **Hijau** | Recognized ✓ |
+| 🟥 **Merah** | Unknown |
+
+### Animasi
+- ✨ **Scanning Line** - Garis bergerak dalam bounding box
+- 🔲 **Corner Accents** - Aksen sudut modern
+- 🔘 **Animated Buttons** - Hover & click effects
+
+---
 
 ## 🚀 Quick Start
 
-### 1. Setup Environment
+### 1️⃣ Clone & Setup
 ```bash
+git clone https://github.com/your-username/App-Desktop.git
+cd "Absensi Desktop"
 python -m venv app.venv
 .\app.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Configure
+### 2️⃣ Configure
 ```bash
 copy .env.example .env
-# Edit .env - set API_BASE and DEVICE_TOKEN
+# Edit .env - isi DEVICE_TOKEN dari admin
 ```
 
-### 3. Run
+### 3️⃣ Run
 ```bash
-# Option A: Double-click run_app.bat
-# Option B: Manual
-.\app.venv\Scripts\activate
+# Windows (1-click)
+.\run_app.bat
+
+# Manual
 python app.py
 ```
 
-## ⚙️ Configuration (.env)
+---
+
+## 📁 Struktur Project
+
+```
+Absensi Desktop/
+├── 📄 app.py              # Main application
+├── 📄 ui.py               # UI layout & styling
+├── 📄 ui_components.py    # Animated components
+├── 📄 api_client.py       # API communication
+├── 📄 camera.py           # Camera & face detection
+├── 📄 tts_engine.py       # Text-to-Speech
+├── 📄 settings_dialog.py  # Settings UI
+├── 📂 assets/             # Images & icons
+├── 📂 logs/               # Application logs
+├── 📄 .env.example        # Environment template
+├── 📄 requirements.txt    # Dependencies
+└── 📄 run_app.bat         # 1-click launcher
+```
+
+---
+
+## ⚙️ Configuration
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `API_BASE` | Backend API URL | http://localhost:8000 |
 | `DEVICE_ID` | Unique device identifier | stb-01 |
-| `DEVICE_TOKEN` | Authentication token | - |
+| `DEVICE_TOKEN` | Authentication token (**REQUIRED**) | - |
 | `CAM_INDEX` | Camera index | 0 |
 | `EDGE_VOICE` | TTS voice | id-ID-GadisNeural |
 
-## 🖥️ System Requirements
+---
 
-- **OS**: Windows 10/11
-- **Python**: 3.10+
-- **Webcam**: USB or built-in
-- **Internet**: Required for TTS (cached after first use)
+## 💻 System Requirements
+
+| Requirement | Minimum |
+|-------------|---------|
+| **OS** | Windows 10/11 |
+| **Python** | 3.10+ |
+| **RAM** | 4 GB |
+| **Camera** | USB/Built-in Webcam |
+| **Internet** | Required for TTS |
+
+---
 
 ## 🔧 Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| No sound | Check internet (TTS needs connection first time) |
-| Camera black | Close other apps using camera (Zoom, Meet) |
-| API error | Ensure backend server is running |
-| Offline indicator | Check network; data will sync when online |
+| Masalah | Solusi |
+|---------|--------|
+| 🔇 Tidak ada suara | Cek koneksi internet (TTS butuh online pertama kali) |
+| 📷 Kamera hitam | Tutup aplikasi lain yang pakai kamera |
+| ❌ API Error | Pastikan backend server berjalan |
+| ⚠️ Offline | Cek network; data akan sync saat online |
 
 ---
-*Frontend for Absensi Kiosk System - Tugas Akhir Project*
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ for Tugas Akhir Project</sub>
+</p>
