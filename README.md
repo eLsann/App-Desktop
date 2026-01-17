@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">🖥️ Absensi Desktop</h1>
+  <h1 align="center">Absensi Desktop</h1>
   <p align="center">
     <strong>Aplikasi Kiosk untuk Sistem Absensi Berbasis Pengenalan Wajah</strong>
   </p>
@@ -19,20 +19,20 @@
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
 | Fitur | Deskripsi |
 |-------|-----------|
-| 🎯 **Real-time Detection** | Bounding box dengan animasi scan line |
-| 👥 **Multi-Face** | Deteksi hingga 5 wajah sekaligus |
-| 🎤 **Natural TTS** | Sapaan suara Indonesia (Edge TTS) |
-| 🔄 **Smart Reconnection** | Auto-retry dengan status indicator |
-| 📡 **Offline Queue** | Data tersimpan saat offline |
-| 🎨 **Modern UI** | Animated buttons & hover effects |
+| **Real-time Detection** | Bounding box dengan animasi scan line |
+| **Multi-Face** | Deteksi hingga 5 wajah sekaligus |
+| **Natural TTS** | Sapaan suara Indonesia (Edge TTS) |
+| **Smart Reconnection** | Auto-retry dengan status indicator |
+| **Offline Queue** | Data tersimpan saat offline |
+| **Modern UI** | Animated buttons & hover effects |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 <table>
 <tr>
@@ -42,7 +42,7 @@
 </tr>
 </table>
 
-### 📦 Libraries
+### Libraries
 
 ```
 PySide6            # Modern Qt6 GUI framework
@@ -54,7 +54,7 @@ python-dotenv      # Environment configuration
 
 ---
 
-## 🎨 UI Features
+## UI Features
 
 ### Status Colors (Bounding Box)
 | Warna | Status |
@@ -65,15 +65,15 @@ python-dotenv      # Environment configuration
 | 🟥 **Merah** | Unknown |
 
 ### Animasi
-- ✨ **Scanning Line** - Garis bergerak dalam bounding box
-- 🔲 **Corner Accents** - Aksen sudut modern
-- 🔘 **Animated Buttons** - Hover & click effects
+- **Scanning Line** - Garis bergerak dalam bounding box
+- **Corner Accents** - Aksen sudut modern
+- **Animated Buttons** - Hover & click effects
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1️⃣ Clone & Setup
+### Clone & Setup
 ```bash
 git clone https://github.com/your-username/App-Desktop.git
 cd "Absensi Desktop"
@@ -82,13 +82,13 @@ python -m venv app.venv
 pip install -r requirements.txt
 ```
 
-### 2️⃣ Configure
+### Configure
 ```bash
 copy .env.example .env
 # Edit .env - isi DEVICE_TOKEN dari admin
 ```
 
-### 3️⃣ Run
+### Run
 ```bash
 # Windows (1-click)
 .\run_app.bat
@@ -99,7 +99,7 @@ python app.py
 
 ---
 
-## 📁 Struktur Project
+## Struktur Project
 
 ```
 Absensi Desktop/
@@ -119,7 +119,7 @@ Absensi Desktop/
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -131,7 +131,7 @@ Absensi Desktop/
 
 ---
 
-## 💻 System Requirements
+## System Requirements
 
 | Requirement | Minimum |
 |-------------|---------|
@@ -143,7 +143,7 @@ Absensi Desktop/
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 | Masalah | Solusi |
 |---------|--------|
@@ -154,7 +154,7 @@ Absensi Desktop/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork repository
 2. Create feature branch (`git checkout -b feature/AmazingFeature`)
@@ -164,12 +164,12 @@ Absensi Desktop/
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ for Tugas Akhir Project</sub>
+  <sub>elsann</sub>
 </p>
