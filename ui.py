@@ -1,3 +1,4 @@
+import os
 from PySide6.QtWidgets import (
     QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget,
     QLineEdit, QFormLayout, QMessageBox, QListWidget, QListWidgetItem,
@@ -5,8 +6,10 @@ from PySide6.QtWidgets import (
     QProgressBar, QDialog, QDialogButtonBox, QGridLayout, QGroupBox,
     QFrame, QScrollArea, QSizePolicy
 )
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QPixmap, QFont
+from PySide6.QtCore import Qt, Signal, QPropertyAnimation, QEasingCurve, QRect
+from PySide6.QtGui import QPixmap, QFont, QColor
+from PySide6.QtWidgets import QGraphicsDropShadowEffect
+from ui_components import AnimatedButton
 
 # Modern color scheme
 COLORS = {
@@ -19,7 +22,9 @@ COLORS = {
     "surface": "#1E293B",
     "surface_light": "#334155",
     "text": "#F1F5F9",
+    "text_primary": "#F1F5F9",
     "text_muted": "#94A3B8",
+    "text_secondary": "#CBD5E1",
     "border": "#475569",
 }
 
@@ -167,7 +172,7 @@ class StatCard(QFrame):
     """Modern stat card widget"""
     def __init__(self, title: str, value: str, icon: str = "", color: str = "primary"):
         super().__init__()
-        self.setFixedHeight(100)
+        self.setFixedHeight(105) # Increased slightly for lift effect
         self.setStyleSheet(f"""
             QFrame {{
                 background: {COLORS['surface']};
@@ -175,6 +180,13 @@ class StatCard(QFrame):
                 border: 1px solid {COLORS['border']};
             }}
         """)
+        
+        # Shadow Effect
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setBlurRadius(10)
+        self.shadow.setColor(QColor(0, 0, 0, 80))
+        self.shadow.setOffset(0, 2)
+        self.setGraphicsEffect(self.shadow)
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 12, 16, 12)
@@ -192,9 +204,186 @@ class StatCard(QFrame):
         layout.addStretch()
         
         self.value_label = value_label
+        
+    def enterEvent(self, event):
+        # Lift animation
+        self.anim = QPropertyAnimation(self.shadow, b"blurRadius")
+        self.anim.setDuration(200)
+        self.anim.setStartValue(10)
+        self.anim.setEndValue(20)
+        self.anim.setEasingCurve(QEasingCurve.OutQuad)
+        self.anim.start()
+        
+        self.shadow.setOffset(0, 5)
+        self.setStyleSheet(f"""
+            QFrame {{
+                background: {COLORS['surface_light']};
+                border-radius: 12px;
+                border: 1px solid {COLORS['primary']};
+            }}
+        """)
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self.anim = QPropertyAnimation(self.shadow, b"blurRadius")
+        self.anim.setDuration(200)
+        self.anim.setStartValue(20)
+        self.anim.setEndValue(10)
+        self.anim.setEasingCurve(QEasingCurve.OutQuad)
+        self.anim.start()
+        
+        self.shadow.setOffset(0, 2)
+        self.setStyleSheet(f"""
+            QFrame {{
+                background: {COLORS['surface']};
+                border-radius: 12px;
+                border: 1px solid {COLORS['border']};
+            }}
+        """)
+        super().leaveEvent(event)
     
     def set_value(self, value: str):
         self.value_label.setText(value)
+
+
+class CameraCaptureDialog(QDialog):
+    """Dialog for capturing face photos via camera"""
+    
+    def __init__(self, parent=None, person_name=""):
+        super().__init__(parent)
+        self.setWindowTitle(f"📷 Capture Wajah - {person_name}")
+        self.setMinimumSize(700, 500)
+        self.setStyleSheet(STYLESHEET)
+        
+        self.person_name = person_name
+        self.captured_images = []
+        self.camera = None
+        self.timer = None
+        
+        self._setup_ui()
+        self._start_camera()
+    
+    def _setup_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+        
+        # Instructions
+        instructions = QLabel(f"Capture foto wajah untuk: {self.person_name}")
+        instructions.setStyleSheet("font-size: 14px; font-weight: 600;")
+        instructions.setAlignment(Qt.AlignCenter)
+        
+        # Camera preview
+        self.preview = QLabel("Memuat kamera...")
+        self.preview.setAlignment(Qt.AlignCenter)
+        self.preview.setMinimumSize(480, 360)
+        self.preview.setStyleSheet(f"background: #000; border-radius: 8px; color: {COLORS['text_muted']};")
+        
+        # Captured thumbnails
+        thumb_layout = QHBoxLayout()
+        thumb_layout.setSpacing(8)
+        self.thumb_labels = []
+        for i in range(5):
+            thumb = QLabel(f"{i+1}")
+            thumb.setFixedSize(80, 80)
+            thumb.setAlignment(Qt.AlignCenter)
+            thumb.setStyleSheet(f"background: {COLORS['surface']}; border-radius: 6px; border: 1px solid {COLORS['border']};")
+            self.thumb_labels.append(thumb)
+            thumb_layout.addWidget(thumb)
+        thumb_layout.addStretch()
+        
+        # Status
+        self.status_label = QLabel("Tekan tombol Capture untuk mengambil foto (max 5)")
+        self.status_label.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 11px;")
+        self.status_label.setAlignment(Qt.AlignCenter)
+        
+        # Buttons
+        btn_layout = QHBoxLayout()
+        
+        self.btn_capture = AnimatedButton("📷 Capture", color=COLORS['success'])
+        self.btn_capture.clicked.connect(self._capture)
+        
+        self.btn_done = AnimatedButton("✅ Selesai & Upload", color=COLORS['primary'])
+        self.btn_done.clicked.connect(self.accept)
+        self.btn_done.setEnabled(False)
+        
+        btn_cancel = QPushButton("❌ Batal")
+        btn_cancel.setProperty("class", "secondary")
+        btn_cancel.clicked.connect(self.reject)
+        
+        btn_layout.addWidget(self.btn_capture)
+        btn_layout.addWidget(self.btn_done)
+        btn_layout.addStretch()
+        btn_layout.addWidget(btn_cancel)
+        
+        layout.addWidget(instructions)
+        layout.addWidget(self.preview, 1)
+        layout.addLayout(thumb_layout)
+        layout.addWidget(self.status_label)
+        layout.addLayout(btn_layout)
+    
+    def _start_camera(self):
+        import cv2
+        self.camera = cv2.VideoCapture(0)
+        if not self.camera.isOpened():
+            self.preview.setText("❌ Kamera tidak tersedia")
+            return
+        
+        from PySide6.QtCore import QTimer
+        self.timer = QTimer()
+        self.timer.timeout.connect(self._update_frame)
+        self.timer.start(33)  # ~30 FPS
+    
+    def _update_frame(self):
+        import cv2
+        if self.camera is None:
+            return
+        ret, frame = self.camera.read()
+        if ret:
+            frame = cv2.flip(frame, 1)  # Mirror
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = rgb.shape
+            from PySide6.QtGui import QImage
+            img = QImage(rgb.data, w, h, ch * w, QImage.Format_RGB888)
+            scaled = QPixmap.fromImage(img).scaled(
+                self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation
+            )
+            self.preview.setPixmap(scaled)
+            self._current_frame = frame
+    
+    def _capture(self):
+        if len(self.captured_images) >= 5:
+            return
+        
+        if hasattr(self, '_current_frame'):
+            import cv2
+            frame = self._current_frame.copy()
+            self.captured_images.append(frame)
+            
+            # Update thumbnail
+            idx = len(self.captured_images) - 1
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = rgb.shape
+            from PySide6.QtGui import QImage
+            img = QImage(rgb.data, w, h, ch * w, QImage.Format_RGB888)
+            thumb = QPixmap.fromImage(img).scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.thumb_labels[idx].setPixmap(thumb)
+            
+            self.status_label.setText(f"Captured: {len(self.captured_images)}/5 foto")
+            self.btn_done.setEnabled(True)
+            
+            if len(self.captured_images) >= 5:
+                self.btn_capture.setEnabled(False)
+                self.status_label.setText("Maksimum 5 foto tercapai. Klik Selesai untuk upload.")
+    
+    def get_captured_images(self):
+        return self.captured_images
+    
+    def closeEvent(self, event):
+        if self.timer:
+            self.timer.stop()
+        if self.camera:
+            self.camera.release()
+        super().closeEvent(event)
 
 
 class MainUI(QWidget):
@@ -208,7 +397,7 @@ class MainUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Absensi Desktop - Modern Dashboard")
-        self.setMinimumSize(1280, 800)
+        self.setMinimumSize(800, 500)  # Smaller minimum for flexibility
         self.setStyleSheet(STYLESHEET)
         
         self._setup_ui()
@@ -244,16 +433,52 @@ class MainUI(QWidget):
         layout.setContentsMargins(20, 0, 20, 0)
         
         # Logo/Title
-        title = QLabel("📊 Absensi Desktop")
-        title.setStyleSheet("font-size: 18px; font-weight: 700;")
+        title_layout = QHBoxLayout()
+        title_layout.setSpacing(10)
         
-        # Status indicator
-        self.lbl_status = QLabel("● Disconnected")
-        self.lbl_status.setStyleSheet(f"color: {COLORS['error']};")
+        logo = QLabel()
+        logo_path = "assets/logo.png"
+        if not os.path.exists(logo_path):
+            logo_path = "logo.png"  # Fallback to current dir if not found
+            
+        if os.path.exists(logo_path):
+            pix = QPixmap(logo_path)
+            if not pix.isNull():
+                logo.setPixmap(pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         
-        layout.addWidget(title)
+        title_text = QLabel("Absensi Desktop")
+        title_text.setStyleSheet("font-size: 18px; font-weight: 700;")
+        
+        title_layout.addWidget(logo)
+        title_layout.addWidget(title_text)
+        
+        # Status Label
+        self.lbl_status = QLabel("Ready")
+        self.lbl_status.setStyleSheet(f"color: {COLORS['text_secondary']}; font-weight: 500;")
+        
+        layout.addLayout(title_layout)
         layout.addStretch()
         layout.addWidget(self.lbl_status)
+        
+        # Settings Button
+        self.btn_settings = QPushButton("⚙️")
+        self.btn_settings.setFixedSize(40, 40)
+        self.btn_settings.setCursor(Qt.PointingHandCursor)
+        self.btn_settings.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {COLORS['surface']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 8px;
+                font-size: 18px;
+                color: {COLORS['text_secondary']};
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS['bg']};
+                color: {COLORS['text_primary']};
+                border-color: {COLORS['primary']};
+            }}
+        """)
+        layout.addWidget(self.btn_settings)
         
         return header
     
@@ -288,7 +513,7 @@ class MainUI(QWidget):
         
         # Quick actions
         actions_layout = QHBoxLayout()
-        self.btn_quick_scan = QPushButton("▶ Mulai Scan")
+        self.btn_quick_scan = AnimatedButton("▶ Mulai Scan", color=COLORS['primary'])
         self.btn_quick_scan.setMinimumWidth(150)
         
         self.btn_refresh_stats = QPushButton("🔄 Refresh Stats")
@@ -310,73 +535,140 @@ class MainUI(QWidget):
         return tab
     
     def _create_kiosk_tab(self) -> QWidget:
-        """Create kiosk/scan tab"""
+        """Create kiosk/scan tab - horizontal layout for flexibility"""
         tab = QWidget()
-        layout = QHBoxLayout(tab)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(20)
+        main_layout = QVBoxLayout(tab)
+        main_layout.setContentsMargins(10, 8, 10, 8)
+        main_layout.setSpacing(8)
         
-        # Left: Camera preview
-        camera_frame = QFrame()
-        camera_frame.setStyleSheet(f"background: {COLORS['surface']}; border-radius: 12px;")
-        camera_layout = QVBoxLayout(camera_frame)
+        # Top bar: Logo + Title + Controls
+        top_bar = QHBoxLayout()
+        top_bar.setSpacing(10)
         
-        self.video = QLabel("📷 Camera Preview")
-        self.video.setAlignment(Qt.AlignCenter)
-        self.video.setMinimumSize(640, 480)
-        self.video.setStyleSheet(f"background: #000; color: {COLORS['text_muted']}; border-radius: 8px;")
+        # Logo
+        import os
+        logo_path = os.path.join(os.path.dirname(__file__), "logo.png")
+        self.logo_label = QLabel()
+        self.logo_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        if os.path.exists(logo_path):
+            logo_pixmap = QPixmap(logo_path)
+            self.logo_label.setPixmap(logo_pixmap.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        else:
+            self.logo_label.setText("🎓")
+            self.logo_label.setStyleSheet("font-size: 28px;")
         
-        # Camera controls
-        cam_controls = QHBoxLayout()
-        self.btn_toggle = QPushButton("▶ Mulai Scan")
-        self.btn_toggle.setMinimumHeight(50)
-        self.btn_toggle.setStyleSheet(f"background: {COLORS['success']}; font-size: 16px;")
+        # Title
+        title_layout = QVBoxLayout()
+        title_layout.setSpacing(0)
+        title = QLabel("SISTEM ABSENSI WAJAH")
+        title.setStyleSheet("font-size: 16px; font-weight: 700;")
+        subtitle = QLabel("Politeknik Baja Tegal")
+        subtitle.setStyleSheet(f"font-size: 10px; color: {COLORS['text_muted']};")
+        title_layout.addWidget(title)
+        title_layout.addWidget(subtitle)
         
-        self.btn_mirror = QPushButton("🔄 Mirror")
+        # Controls
+        self.btn_toggle = AnimatedButton("▶ Mulai", color=COLORS['success'])
+        # self.btn_toggle.setStyleSheet(f"background: {COLORS['success']}; font-size: 11px; padding: 6px 12px;") # Handled by class
+        
+        self.btn_mirror = QPushButton("🔄")
         self.btn_mirror.setProperty("class", "secondary")
+        self.btn_mirror.setToolTip("Mirror")
         
-        self.btn_flip_camera = QPushButton("📷 Ganti Kamera")
+        self.btn_flip_camera = QPushButton("📷")
         self.btn_flip_camera.setProperty("class", "secondary")
+        self.btn_flip_camera.setToolTip("Ganti Kamera")
         
-        cam_controls.addWidget(self.btn_toggle)
-        cam_controls.addWidget(self.btn_mirror)
-        cam_controls.addWidget(self.btn_flip_camera)
+        self.scan_status = QLabel("Siap")
+        self.scan_status.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 10px;")
         
+        top_bar.addWidget(self.logo_label)
+        top_bar.addLayout(title_layout)
+        top_bar.addStretch()
+        top_bar.addWidget(self.btn_toggle)
+        top_bar.addWidget(self.btn_mirror)
+        top_bar.addWidget(self.btn_flip_camera)
+        top_bar.addWidget(self.scan_status)
+        
+        # Main content: Horizontal layout (Camera | Greeting)
+        content = QHBoxLayout()
+        content.setSpacing(10)
+        
+        # LEFT: Camera preview (expands)
+        camera_frame = QFrame()
+        camera_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        camera_frame.setStyleSheet(f"""
+            background: {COLORS['surface']}; 
+            border-radius: 8px;
+            border: 2px solid {COLORS['border']};
+        """)
+        camera_layout = QVBoxLayout(camera_frame)
+        camera_layout.setContentsMargins(6, 6, 6, 6)
+        
+        self.video = QLabel("📷 Arahkan wajah ke kamera")
+        self.video.setAlignment(Qt.AlignCenter)
+        self.video.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.video.setStyleSheet(f"""
+            background: #000; 
+            color: {COLORS['text_muted']}; 
+            border-radius: 6px;
+            font-size: 14px;
+        """)
         camera_layout.addWidget(self.video)
-        camera_layout.addLayout(cam_controls)
         
-        # Right: Status and history
+        # RIGHT: Greeting panel (fixed width ratio)
         right_panel = QFrame()
-        right_panel.setFixedWidth(350)
-        right_layout = QVBoxLayout(right_panel)
-        
-        # Status badge
-        self.badge = QLabel("—")
-        self.badge.setAlignment(Qt.AlignCenter)
-        self.badge.setMinimumHeight(80)
-        self.badge.setStyleSheet(f"""
+        right_panel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        right_panel.setMinimumWidth(250)
+        right_panel.setMaximumWidth(400)
+        right_panel.setStyleSheet(f"""
             background: {COLORS['surface']};
-            border-radius: 12px;
+            border-radius: 8px;
+            border: 2px solid {COLORS['primary']};
+        """)
+        right_layout = QVBoxLayout(right_panel)
+        right_layout.setContentsMargins(16, 16, 16, 16)
+        right_layout.setSpacing(12)
+        
+        # Name badge (large)
+        self.badge = QLabel("Silakan absen...")
+        self.badge.setAlignment(Qt.AlignCenter)
+        self.badge.setWordWrap(True)
+        self.badge.setStyleSheet(f"""
             font-size: 24px;
             font-weight: 700;
+            color: {COLORS['text']};
         """)
         
-        self.scan_status = QLabel("Status: Idle")
-        self.scan_status.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 14px;")
+        # Greeting message
+        self.greeting_msg = QLabel("Arahkan wajah Anda ke kamera untuk melakukan absensi")
+        self.greeting_msg.setAlignment(Qt.AlignCenter)
+        self.greeting_msg.setWordWrap(True)
+        self.greeting_msg.setStyleSheet(f"""
+            font-size: 13px;
+            color: {COLORS['text_muted']};
+        """)
         
-        # History
-        history_label = QLabel("Riwayat Scan (10 terakhir)")
-        history_label.setStyleSheet("font-weight: 600; margin-top: 16px;")
-        
-        self.history = QListWidget()
+        # Spacer for mascot placeholder (later)
+        mascot_placeholder = QLabel("")
+        mascot_placeholder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
         right_layout.addWidget(self.badge)
-        right_layout.addWidget(self.scan_status)
-        right_layout.addWidget(history_label)
-        right_layout.addWidget(self.history)
+        right_layout.addWidget(self.greeting_msg)
+        right_layout.addWidget(mascot_placeholder)
         
-        layout.addWidget(camera_frame, 2)
-        layout.addWidget(right_panel, 1)
+        # Add to content layout (70:30 ratio)
+        content.addWidget(camera_frame, 7)
+        content.addWidget(right_panel, 3)
+        
+        # Hidden history for internal use
+        self.history = QListWidget()
+        self.history.setVisible(False)
+        
+        # Assemble main layout
+        main_layout.addLayout(top_bar, 0)
+        main_layout.addLayout(content, 1)
+        main_layout.addWidget(self.history)
         
         return tab
     
@@ -405,8 +697,12 @@ class MainUI(QWidget):
         
         # Action buttons
         action_layout = QHBoxLayout()
-        self.btn_enroll = QPushButton("📸 Enroll Dataset")
-        self.btn_enroll.setStyleSheet(f"background: {COLORS['success']};")
+        
+        self.btn_capture_enroll = QPushButton("📷 Capture Wajah")
+        self.btn_capture_enroll.setStyleSheet(f"background: {COLORS['primary']};")
+        
+        self.btn_enroll = QPushButton("📁 Upload File")
+        self.btn_enroll.setProperty("class", "secondary")
         
         self.btn_people_delete = QPushButton("🗑️ Hapus")
         self.btn_people_delete.setProperty("class", "danger")
@@ -414,6 +710,7 @@ class MainUI(QWidget):
         self.btn_rebuild_cache = QPushButton("🔧 Rebuild Cache")
         self.btn_rebuild_cache.setProperty("class", "secondary")
         
+        action_layout.addWidget(self.btn_capture_enroll)
         action_layout.addWidget(self.btn_enroll)
         action_layout.addWidget(self.btn_people_delete)
         action_layout.addWidget(self.btn_rebuild_cache)

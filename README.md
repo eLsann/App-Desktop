@@ -1,97 +1,81 @@
-# Absensi Desktop
+# Absensi Desktop App
 
-Aplikasi desktop untuk sistem absensi berbasis pengenalan wajah menggunakan PySide6.
+Aplikasi kiosk profesional untuk sistem absensi berbasis pengenalan wajah. Dibangun dengan **Python (PySide6)** dan terintegrasi dengan backend FastAPI.
 
-## Fitur
+## ✨ Fitur Utama
 
-- Pengenalan wajah real-time via kamera
-- Text-to-Speech (TTS) sapaan natural dengan Edge TTS
-- Dashboard statistik absensi
-- Manajemen karyawan (CRUD)
-- Export laporan CSV
-- UI modern dengan dark theme
+- **🎯 Real-time Face Detection** - Bounding box dengan animasi scan line
+- **👥 Multi-Face Recognition** - Deteksi hingga 5 wajah sekaligus
+- **🎤 Natural TTS** - Sapaan suara Indonesia (Microsoft Edge TTS)
+- **📊 Dual Mode** - Kiosk Mode + Admin Dashboard
+- **🔄 Offline Queue** - Data tersimpan saat offline, auto-sync saat online
+- **📡 Smart Reconnection** - Deteksi koneksi otomatis dengan indikator status
 
-## Instalasi
-
-```bash
-# Clone repository
-git clone <repo-url>
-cd "Absensi Desktop"
-
-# Buat virtual environment
-python -m venv app.venv
-app.venv\Scripts\activate  # Windows
-source app.venv/bin/activate  # Linux/Mac
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-## Konfigurasi (.env)
-
-```env
-API_BASE=http://localhost:8000
-DEVICE_ID=stb-01
-DEVICE_TOKEN=token123
-CAMERA_INDEX=0
-EDGE_VOICE=id-ID-GadisNeural
-```
-
-## Menjalankan
-
-```bash
-# Pastikan API server berjalan terlebih dahulu
-python app.py
-```
-
-## Panduan Penggunaan
-
-### 1. Login Admin
-- Buka tab **Settings**
-- Masukkan username dan password
-- Klik **Login**
-
-### 2. Tambah Karyawan
-- Buka tab **People**
-- Klik **+ Tambah**
-- Masukkan nama karyawan
-- Pilih karyawan, klik ** Enroll** untuk upload foto wajah
-
-### 3. Mulai Absensi
-- Buka tab **Kiosk**
-- Klik ** Mulai Scan**
-- Arahkan wajah ke kamera
-
-### 4. Lihat Laporan
-- Buka tab **Reports**
-- Masukkan periode (YYYY-MM)
-- Klik ** Load Report** atau ** Export CSV**
-
-## Struktur File
+## 📁 Struktur Folder
 
 ```
 Absensi Desktop/
-├── app.py          # Main application
-├── ui.py           # UI components
-├── api_client.py   # API client
-├── camera.py       # Camera handler
-├── tts_engine.py   # TTS dengan caching
-├── validators.py   # Input validation
-└── logger_config.py
+├── app.py              # Main application
+├── ui.py               # UI layout & styling
+├── ui_components.py    # Animated button components
+├── api_client.py       # API communication
+├── camera.py           # Camera & face detection
+├── tts_engine.py       # Text-to-Speech
+├── settings_dialog.py  # Settings UI
+├── logger_config.py    # Logging config
+├── run_app.bat         # 1-click launcher
+├── requirements.txt    # Dependencies
+└── .env                # Configuration (create from .env.example)
 ```
 
-## Teknologi
+## 🚀 Quick Start
 
-- PySide6 (Qt6)
-- OpenCV
-- Edge TTS
-- pygame (audio)
-- requests
+### 1. Setup Environment
+```bash
+python -m venv app.venv
+.\app.venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-## Aturan Jam Absensi
+### 2. Configure
+```bash
+copy .env.example .env
+# Edit .env - set API_BASE and DEVICE_TOKEN
+```
 
-| Waktu | Keterangan |
-|-------|------------|
-| < 08:00 | Masuk tepat waktu |
-| > 08:00 | Masuk terlambat |
-| 14:00 - 16:00 | Jam pulang |
+### 3. Run
+```bash
+# Option A: Double-click run_app.bat
+# Option B: Manual
+.\app.venv\Scripts\activate
+python app.py
+```
+
+## ⚙️ Configuration (.env)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `API_BASE` | Backend API URL | http://localhost:8000 |
+| `DEVICE_ID` | Unique device identifier | stb-01 |
+| `DEVICE_TOKEN` | Authentication token | - |
+| `CAM_INDEX` | Camera index | 0 |
+| `EDGE_VOICE` | TTS voice | id-ID-GadisNeural |
+
+## 🖥️ System Requirements
+
+- **OS**: Windows 10/11
+- **Python**: 3.10+
+- **Webcam**: USB or built-in
+- **Internet**: Required for TTS (cached after first use)
+
+## 🔧 Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| No sound | Check internet (TTS needs connection first time) |
+| Camera black | Close other apps using camera (Zoom, Meet) |
+| API error | Ensure backend server is running |
+| Offline indicator | Check network; data will sync when online |
+
+---
+*Frontend for Absensi Kiosk System - Tugas Akhir Project*

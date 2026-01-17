@@ -8,7 +8,7 @@ from logger_config import get_logger
 logger = get_logger("camera")
 
 class CameraFaceCropper:
-    def __init__(self, cam_index=0):
+    def __init__(self, cam_index=0, auto_open=False):
         self.cam_index = cam_index
         # Initialize Haar Cascade classifier once
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -19,15 +19,15 @@ class CameraFaceCropper:
         self._mirror_mode = False  # False = normal, True = mirror
         self._available_cameras = []
         
-        # Discover available cameras
-        self._discover_cameras()
+        # Discover cameras only if needed or in background (skipped for fast startup)
+        # self._discover_cameras() 
         
-        try:
-            self.open(self.cam_index)
-            logger.info(f"Camera initialized successfully on index {cam_index}")
-        except Exception as e:
-            logger.error(f"Failed to initialize camera: {str(e)}")
-            raise
+        if auto_open:
+            try:
+                self.open(self.cam_index)
+                logger.info(f"Camera initialized successfully on index {cam_index}")
+            except Exception as e:
+                logger.error(f"Failed to initialize camera: {str(e)}")
 
     def _discover_cameras(self):
         """Discover all available cameras"""
@@ -63,7 +63,21 @@ class CameraFaceCropper:
 
     def get_available_cameras(self) -> List[Dict]:
         """Get list of available cameras"""
+        if not self._available_cameras:
+            self._discover_cameras()
         return self._available_cameras.copy()
+    
+    def release(self):
+        """Release camera resources"""
+        with self._lock:
+            if self.cap is not None:
+                try:
+                    self.cap.release()
+                    logger.info(f"Camera {self.cam_index} released")
+                except Exception as e:
+                    logger.warning(f"Error releasing camera: {e}")
+                finally:
+                    self.cap = None
 
     def open(self, cam_index: int):
         """Open camera with improved error handling and validation"""
@@ -110,6 +124,10 @@ class CameraFaceCropper:
 
     def flip_next(self, max_index=4):
         """Switch to next available camera"""
+        # Lazy discovery if not yet done
+        if not self._available_cameras:
+            self._discover_cameras()
+            
         available_indices = [cam['index'] for cam in self._available_cameras]
         
         if not available_indices:
@@ -185,83 +203,62 @@ class CameraFaceCropper:
                 logger.error(f"Error reading frame from camera {self.cam_index}: {str(e)}")
                 return None
 
-    def find_face_crop(self, frame_bgr, pad=0.18):
-        """Find and crop face from frame using OpenCV Haar Cascade"""
+
+    
+    def find_all_faces(self, frame_bgr, max_faces: int = 5, pad: float = 0.15):
+        """Find all faces in frame, return list sorted left-to-right with queue IDs"""
         if frame_bgr is None:
-            logger.warning("No frame provided for face detection")
-            return None, None
+            return []
         
         try:
             h, w = frame_bgr.shape[:2]
-            
-            # Validate frame dimensions
             if h < 100 or w < 100:
-                logger.warning(f"Frame too small for face detection: {w}x{h}")
-                return None, None
+                return []
             
-            logger.debug(f"Processing frame {w}x{h} for face detection")
-            
-            # Convert to grayscale for face detection
             gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
             
-            # Detect faces using pre-initialized cascade
             faces = self.face_cascade.detectMultiScale(
                 gray,
-                scaleFactor=1.1,
+                scaleFactor=1.05,
                 minNeighbors=5,
-                minSize=(30, 30)
+                minSize=(50, 50)
             )
             
             if len(faces) == 0:
-                logger.debug("No faces detected in frame")
-                return None, None
+                return []
             
-            logger.debug(f"Found {len(faces)} face(s)")
+            # Sort by x position (left to right) for queue order
+            faces = sorted(faces, key=lambda f: f[0])
+            faces = faces[:max_faces]
             
-            # Use the first detected face
-            x, y, bw, bh = faces[0]
+            results = []
+            for i, (x, y, bw, bh) in enumerate(faces):
+                # Apply padding
+                px = int(bw * pad)
+                py = int(bh * pad)
+                x1 = max(0, x - px)
+                y1 = max(0, y - py)
+                x2 = min(w, x + bw + px)
+                y2 = min(h, y + bh + py)
+                
+                if x2 <= x1 or y2 <= y1:
+                    continue
+                
+                crop = frame_bgr[y1:y2, x1:x2].copy()
+                if crop is None or crop.size == 0:
+                    continue
+                
+                results.append({
+                    "queue_id": i + 1,
+                    "bbox": (x1, y1, x2, y2),
+                    "crop": crop
+                })
             
-            # Validate bounding box
-            if bw <= 0 or bh <= 0:
-                logger.warning("Invalid face detection bounding box")
-                return None, None
-            
-            # Ensure coordinates are within frame bounds
-            x1 = max(0, x)
-            y1 = max(0, y)
-            x2 = min(w, x + bw)
-            y2 = min(h, y + bh)
-            
-            # Validate final coordinates
-            if x2 <= x1 or y2 <= y1:
-                logger.warning("Invalid face crop coordinates")
-                return None, None
-            
-            # Apply padding
-            px = int(bw * pad)
-            py = int(bh * pad)
-            x1 = max(0, x1 - px)
-            y1 = max(0, y1 - py)
-            x2 = min(w, x1 + bw + 2 * px)
-            y2 = min(h, y1 + bh + 2 * py)
-            
-            # Final validation
-            if x2 <= x1 or y2 <= y1:
-                logger.warning("Invalid padded face crop coordinates")
-                return None, None
-            
-            crop = frame_bgr[y1:y2, x1:x2].copy()
-            
-            # Validate crop
-            if crop is None or crop.size == 0:
-                logger.warning("Failed to create face crop")
-                return None, None
-            
-            return crop, (x1, y1, x2, y2)
+            return results
             
         except Exception as e:
-            logger.error(f"Error in face detection: {str(e)}")
-            return None, None
+            logger.error(f"Error in multi-face detection: {e}")
+            return []
 
     def capture_photo(self, save_path: Optional[str] = None) -> Optional[np.ndarray]:
         """Capture a single photo from camera"""
@@ -319,16 +316,3 @@ class CameraFaceCropper:
             logger.error(f"Error encoding JPEG: {str(e)}")
             return None
 
-    def release(self):
-        """Release camera resources with proper cleanup"""
-        with self._lock:
-            if self.cap is not None:
-                try:
-                    self.cap.release()
-                    logger.info(f"Camera {self.cam_index} released successfully")
-                except Exception as e:
-                    logger.error(f"Error releasing camera: {str(e)}")
-                finally:
-                    self.cap = None
-            
-            logger.info("Camera resources cleaned up")

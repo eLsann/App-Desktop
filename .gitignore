@@ -9,7 +9,7 @@ app.venv/
 .venv/
 venv/
 
-# Environment
+# Environment (contains secrets)
 .env
 
 # Logs
@@ -26,8 +26,9 @@ logs/
 .DS_Store
 Thumbs.db
 
-# TTS Cache
+# App specific
 tts_cache/
+offline_queue/
 
 # Workspace files
 *.code-workspace
