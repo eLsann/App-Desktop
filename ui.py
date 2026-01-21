@@ -6,10 +6,10 @@ from PySide6.QtWidgets import (
     QProgressBar, QDialog, QDialogButtonBox, QGridLayout, QGroupBox,
     QFrame, QScrollArea, QSizePolicy
 )
-from PySide6.QtCore import Qt, Signal, QPropertyAnimation, QEasingCurve, QRect
+from PySide6.QtCore import Qt, Signal, QPropertyAnimation, QEasingCurve, QRect, QVariantAnimation
 from PySide6.QtGui import QPixmap, QFont, QColor
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
-from ui_components import AnimatedButton
+from PySide6.QtWidgets import QGraphicsDropShadowEffect, QGraphicsOpacityEffect
+from ui_components import AnimatedButton, HoverCard
 
 # Modern color scheme
 COLORS = {
@@ -169,10 +169,18 @@ QScrollBar::handle:vertical {{
 
 
 class StatCard(QFrame):
-    """Modern stat card widget"""
+    """Modern stat card widget with animations"""
     def __init__(self, title: str, value: str, icon: str = "", color: str = "primary"):
         super().__init__()
-        self.setFixedHeight(105) # Increased slightly for lift effect
+        self.setFixedHeight(105)
+        self.current_value = 0
+        
+        # Parse initial value
+        try:
+            self.current_value = int(''.join(filter(str.isdigit, value)))
+        except:
+            pass
+
         self.setStyleSheet(f"""
             QFrame {{
                 background: {COLORS['surface']};
@@ -204,6 +212,7 @@ class StatCard(QFrame):
         layout.addStretch()
         
         self.value_label = value_label
+        self.color_name = color
         
     def enterEvent(self, event):
         # Lift animation
@@ -219,7 +228,7 @@ class StatCard(QFrame):
             QFrame {{
                 background: {COLORS['surface_light']};
                 border-radius: 12px;
-                border: 1px solid {COLORS['primary']};
+                border: 1px solid {COLORS[self.color_name]};
             }}
         """)
         super().enterEvent(event)
@@ -243,7 +252,28 @@ class StatCard(QFrame):
         super().leaveEvent(event)
     
     def set_value(self, value: str):
-        self.value_label.setText(value)
+        # Clean non-digit chars to find target int
+        clean_val = ''.join(filter(str.isdigit, value))
+        if not clean_val:
+            self.value_label.setText(value)
+            return
+            
+        try:
+            target = int(clean_val)
+            if target != self.current_value:
+                # Animate count
+                self.anim_counter = QVariantAnimation(self)
+                self.anim_counter.setStartValue(self.current_value)
+                self.anim_counter.setEndValue(target)
+                self.anim_counter.setDuration(1000) # 1s duration
+                self.anim_counter.setEasingCurve(QEasingCurve.OutExpo)
+                self.anim_counter.valueChanged.connect(lambda v: self.value_label.setText(str(int(v))))
+                self.anim_counter.start()
+                self.current_value = target
+            else:
+                 self.value_label.setText(value)
+        except:
+             self.value_label.setText(value)
 
 
 class CameraCaptureDialog(QDialog):
@@ -493,15 +523,19 @@ class MainUI(QWidget):
         stats_layout = QHBoxLayout()
         stats_layout.setSpacing(16)
         
-        self.stat_checkin = StatCard("Check-in Hari Ini", "0", "✓", "success")
+        # Stats row
+        stats_layout = QHBoxLayout()
+        stats_layout.setSpacing(16)
+        
+        self.stat_checkin = StatCard("Check-in Hari Ini", "0", "✅", "success")
         self.stat_checkout = StatCard("Check-out", "0", "📤", "primary")
-        self.stat_late = StatCard("Terlambat", "0", "⚠", "warning")
-        self.stat_unknown = StatCard("Unknown", "0", "❓", "error")
+        self.stat_late = StatCard("Terlambat", "0", "⚠️", "warning")
+        self.stat_total = StatCard("Total Terdaftar", "0", "👥", "text")  # Changed from Unknown
         
         stats_layout.addWidget(self.stat_checkin)
         stats_layout.addWidget(self.stat_checkout)
         stats_layout.addWidget(self.stat_late)
-        stats_layout.addWidget(self.stat_unknown)
+        stats_layout.addWidget(self.stat_total)
         
         # Recent activity section
         activity_group = QGroupBox("Aktivitas Terkini")
@@ -898,6 +932,21 @@ class MainUI(QWidget):
             font-weight: 700;
             padding: 16px;
         """)
+
+    def animate_greeting(self, text):
+        """Fade in animation for greeting text"""
+        self.greeting_msg.setText(text)
+        
+        # Opacity effect
+        effect = QGraphicsOpacityEffect(self.greeting_msg)
+        self.greeting_msg.setGraphicsEffect(effect)
+        
+        self.anim_greet = QPropertyAnimation(effect, b"opacity")
+        self.anim_greet.setDuration(800)
+        self.anim_greet.setStartValue(0)
+        self.anim_greet.setEndValue(1)
+        self.anim_greet.setEasingCurve(QEasingCurve.OutQuad)
+        self.anim_greet.start()
     
     def push_history(self, text: str):
         """Add item to history list"""

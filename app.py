@@ -316,8 +316,15 @@ class DesktopApp:
                 self.last_sent = now
                 self._request_inflight = True
             
-            # Encode full frame and send for multi-face recognition
-            jpg = self.cam.encode_jpg(frame, quality=95)
+            # Encode for API: Resize large images to max 800px width for speed
+            h, w = frame.shape[:2]
+            upload_frame = frame
+            if w > 800:
+                scale = 800 / w
+                new_h = int(h * scale)
+                upload_frame = cv2.resize(frame, (800, new_h), interpolation=cv2.INTER_AREA)
+            
+            jpg = self.cam.encode_jpg(upload_frame, quality=85)
             if jpg:
                 threading.Thread(target=self._recognize_multi, args=(jpg,), daemon=True).start()
             else:
@@ -478,7 +485,7 @@ class DesktopApp:
         
         # Update UI
         self.ui.badge.setText(f"✓ {names_str}")
-        self.ui.greeting_msg.setText(combined_audio)
+        self.ui.animate_greeting(combined_audio)
         
         # Log to admin dashboard
         ts = time.strftime("%H:%M:%S")
@@ -509,6 +516,13 @@ class DesktopApp:
         # TTS - use speak_once with cooldown
         if self.tts:
             try:
+                # Do NOT track unknown count in stats anymore
+                pass
+            except Exception as e:
+                pass
+        
+        if self.tts:
+            try:
                 self.tts.speak_once("combined", combined_audio, cooldown=5.0)
             except Exception as e:
                 logger.error(f"TTS error: {e}")
@@ -528,11 +542,18 @@ class DesktopApp:
         self.ui.stat_checkin.set_value(str(self.stats["checkin"]))
         self.ui.stat_checkout.set_value(str(self.stats["checkout"]))
         self.ui.stat_late.set_value(str(self.stats["late"]))
-        self.ui.stat_unknown.set_value(str(self.stats["unknown"]))
+        self.ui.stat_total.set_value(str(self.stats.get("total_registered", 0)))
     
     def refresh_stats(self):
-        """Refresh stats (reset for demo)"""
-        self.stats = {"checkin": 0, "checkout": 0, "late": 0, "unknown": 0}
+        """Refresh stats and get total registered from API"""
+        self.stats = {"checkin": 0, "checkout": 0, "late": 0, "total_registered": 0}
+        # Try to get total registered from API
+        try:
+            if self.client.admin_token:
+                persons = self.client.admin_list_persons()
+                self.stats["total_registered"] = len(persons)
+        except Exception:
+            pass
         self._update_stat_cards()
         self.ui.info("Stats", "Stats direset")
     
@@ -555,8 +576,9 @@ class DesktopApp:
                 events = result.get("events_deleted", 0)
                 daily = result.get("daily_deleted", 0)
                 
-                # Reset local stats
-                self.stats = {"checkin": 0, "checkout": 0, "late": 0, "unknown": 0}
+                # Reset local stats (keep total_registered)
+                total = self.stats.get("total_registered", 0)
+                self.stats = {"checkin": 0, "checkout": 0, "late": 0, "total_registered": total}
                 self._update_stat_cards()
                 
                 # Clear activity list
