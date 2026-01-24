@@ -112,8 +112,10 @@ class SettingsDialog(QDialog):
         self.camera_idx.setStyleSheet("""
             QSpinBox { 
                 padding: 8px; border: 2px solid #334155; 
-                border-radius: 8px; background: #1e293b; color: white; 
+                border-radius: 8px; background: #1e293b; color: white;
+                min-width: 80px;
             }
+            QSpinBox::up-button, QSpinBox::down-button { width: 0px; border: none; }
         """)
         form_layout.addRow("Index Kamera:", self.camera_idx)
 
