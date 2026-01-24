@@ -68,7 +68,7 @@ class DesktopApp:
         if self.device_id == "YOUR_DEVICE_ID":
              self.device_id = "stb-01"
 
-        self.device_token = os.getenv("DEVICE_TOKEN") or "87654321"
+        self.device_token = (os.getenv("DEVICE_TOKEN") or "87654321").strip()
         self.cam_index = int(os.getenv("CAM_INDEX", "0"))
         self.request_interval = float(os.getenv("REQUEST_INTERVAL", "1.5"))
         
