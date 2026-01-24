@@ -1,3 +1,5 @@
+import sys
+import os
 import cv2
 import numpy as np
 import threading
@@ -7,11 +9,29 @@ from logger_config import get_logger
 
 logger = get_logger("camera")
 
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller temp folder
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 class CameraFaceCropper:
     def __init__(self, cam_index=0, auto_open=False):
         self.cam_index = cam_index
-        # Initialize Haar Cascade classifier once
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        # Initialize Haar Cascade from bundled assets
+        cascade_path = resource_path(os.path.join("assets", "haarcascade_frontalface_default.xml"))
+        self.face_cascade = cv2.CascadeClassifier(cascade_path)
+        
+        if self.face_cascade.empty():
+            logger.error(f"Failed to load cascade from: {cascade_path}")
+            # Fallback to cv2.data as last resort (works in dev if assets invalid)
+            self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        
+        if self.face_cascade.empty():
+            logger.critical("Could not load face cascade classifier!")
         self.cap = None
         self._lock = threading.Lock()
         self._frame_count = 0
