@@ -1,4 +1,4 @@
-# 📸 Absensi Desktop
+# Absensi Desktop
 
 <div align="center">
 
@@ -21,13 +21,13 @@
 
 ---
 
-## ✨ Overview
+## Overview
 
 **Absensi Desktop** reinvents attendance tracking by combining advanced computer vision with a modern, frictionless user experience. Designed for efficiency, it allows users to check in simply by looking at the camera—no touching, no cards, no hassle.
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 <table>
   <tr>
@@ -68,7 +68,7 @@
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 We use industry-standard technologies to ensure reliability and performance:
 
@@ -82,7 +82,7 @@ We use industry-standard technologies to ensure reliability and performance:
 
 ---
 
-## 📦 Installation Guide
+## Installation Guide
 
 <details open>
 <summary><b>🔥 Quick Install (Recommended)</b></summary>
