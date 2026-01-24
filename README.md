@@ -5,7 +5,6 @@
 [![Release](https://img.shields.io/github/v/release/eLsann/App-Desktop?style=for-the-badge&color=2563EB&label=Stable%20Release)](https://github.com/eLsann/App-Desktop/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows)](https://github.com/eLsann/App-Desktop/releases)
 [![Python](https://img.shields.io/badge/Python-3.10-EF4444?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 **Intelligent Face Recognition Attendance System**
 <br>
