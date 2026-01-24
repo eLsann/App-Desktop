@@ -1,104 +1,79 @@
-<p align="center">
-  <img src="assets/logo.png" width="100" alt="Absensi Desktop Logo">
-</p>
+# 📸 Absensi Desktop
 
-# Absensi Desktop
+<div align="center">
 
-<p align="center">
-  <strong>Sistem Absensi Kiosk Wajah Cerdas & Interaktif</strong>
-</p>
+[![Release](https://img.shields.io/github/v/release/eLsann/App-Desktop?style=for-the-badge&color=2563EB)](https://github.com/eLsann/App-Desktop/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows)](https://github.com/eLsann/App-Desktop/releases)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-<p align="center">
-  <img src="https://img.shields.io/github/v/release/eLsann/App-Desktop?style=for-the-badge&color=2563EB" alt="Release">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/PySide6-GUI-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="PySide6">
-  <img src="https://img.shields.io/badge/Production-Ready-success?style=for-the-badge&logo=windows" alt="Status">
-</p>
+**Next-Generation Face Recognition Attendance System**
+<br>
+*Fast, Accurate, and Secure.*
+
+[📥 **Download Latest Installer**](https://github.com/eLsann/App-Desktop/releases/latest)
+
+</div>
 
 ---
 
 ## ✨ Overview
-**Absensi Desktop** adalah aplikasi kiosk modern yang dirancang untuk pencatatan kehadiran berbasis pengenalan wajah (*face recognition*). Dibangun dengan teknologi komputer visi terkini, aplikasi ini menawarkan pengalaman absensi yang cepat, akurat, dan futuristik.
+**Absensi Desktop** is a modern attendance application designed for seamless user experiences. Powered by advanced computer vision, it enables touchless check-ins with real-time verification and smart voice greetings.
 
-Cocok untuk: **Kampus**, **Kantor**, dan **Event**.
-
----
-
-## ⚡ Key Features
-
-| Fitur Pro | Keunggulan |
-|-----------|------------|
-| 🧠 **AI Face Recognition** | Deteksi wajah presisi dengan bounding box & scanning animation. |
-| 👥 **Multi-Face Support** | Mendeteksi hingga **5 orang sekaligus** dalam satu frame. |
-| 🗣️ **Natural TTS** | Sapaan suara Indonesia yang natural (via Edge TTS). |
-| 📊 **Real-Time Stats** | Dashboard analitik langsung untuk memantau kehadiran harian. |
-| 🔌 **Offline First** | Tetap berfungsi tanpa internet (data disinkronisasi otomatis saat online). |
-| 🎨 **Modern UI/UX** | Antarmuka *Dark Mode* yang bersih, responsif, dan profesional. |
+### 🚀 Key Features
+*   **👁️ Smart Recognition**: Detects and verifies faces in milliseconds.
+*   **🎨 Modern UI**: Dark-themed, responsive interface built with PySide6.
+*   **📊 Live Dashboard**: Real-time statistics for daily check-ins, lates, and absentees.
+*   **🎙️ Interactive Voice**: Personalized greetings using Text-to-Speech (TTS).
+*   **🔐 Admin Suite**: Secure management for user data and attendance logs.
 
 ---
 
-## 📥 Installation
+## � Installation Guide
 
-### Cara Mudah (Pengguna Umum)
-Tidak perlu coding! Cukup download installer resmi kami:
+Getting started is easy. Follow these steps to install the application on your **Windows** machine:
 
-1.  Kunjungi halaman **[Releases](../../releases)**.
-2.  Download file **`AbsensiDesktop_Setup.exe`** terbaru.
-3.  Install dan jalankan aplikasi.
+### 1. Download
+Click the button below to download the official installer (`.exe`) from our Releases page:
 
-### Cara Developer (Source Code)
-Jika Anda ingin mengembangkan atau memodifikasi kode:
+<a href="https://github.com/eLsann/App-Desktop/releases/latest">
+  <img src="https://img.shields.io/badge/Download_Installer-v1.0.0-2563EB?style=for-the-badge&logo=windows&logoColor=white" height="40">
+</a>
 
-```bash
-# 1. Clone Repository
-git clone https://github.com/eLsann/App-Desktop.git
-cd "Absensi Desktop"
+### 2. Install
+*   Run the file `AbsensiDesktop_Setup.exe`.
+*   Follow the on-screen instructions.
+*   The app will automatically install required dependencies.
 
-# 2. Setup Virtual Environment
-python -m venv app.venv
-.\app.venv\Scripts\activate
+> **Note**: If you see a "Windows protected your PC" popup, click **More info** -> **Run anyway**. This happens because the app certificate is self-signed.
 
-# 3. Install Dependencies
-pip install -r requirements.txt
-
-# 4. Config
-copy .env.example .env
-# (Isi DEVICE_TOKEN di file .env)
-
-# 5. Run
-python app.py
-```
+### 3. Launch
+Open **Absensi Desktop** from your Start Menu or Desktop shortcut.
 
 ---
 
-## 🖥️ User Interface
-
-### Status Indikator
-Aplikasi menggunakan kode warna visual yang intuitif pada bounding box kamera:
-
-*   ⚪ **Putih**: *Scanning* (Mencari wajah)
-*   🟡 **Kuning**: *Verifying* (Memverifikasi dengan server)
-*   🟢 **Hijau**: *Verified* (Absensi berhasil)
-*   🔴 **Merah**: *Unknown* (Wajah tidak terdaftar)
-
----
-
-## 🛠️ Configuration (.env)
-
-| Variable | Fungsi | Default |
-|----------|--------|---------|
-| `API_BASE` | URL Backend API | `http://localhost:8000` |
-| `DEVICE_ID` | ID Unik Perangkat Kiosk | `stb-01` |
-| `DEVICE_TOKEN` | Token Keamanan (**Wajib**) | - |
-| `CAM_INDEX` | Indeks Kamera (0, 1, 2...) | `0` |
-| `EDGE_VOICE` | Model Suara TTS | `id-ID-GadisNeural` |
+## �️ Technology Stack
+Built with robust modern technologies:
+*   **Core**: Python 3.10
+*   **GUI**: PySide6 (Qt)
+*   **Vision**: OpenCV & MediaPipe
+*   **Packaging**: PyInstaller & Inno Setup
 
 ---
 
 ## 🤝 Contribution
-Project ini dikembangkan oleh **eLsann** untuk **Politeknik Baja Tegal**.
-Pull requests are welcome!
+Contributions are welcome! If you have ideas for improvements:
+1.  Fork the repository.
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
 
-<p align="center">
-  <sub>Built with ❤️ using Python & PySide6</sub>
-</p>
+---
+
+<div align="center">
+
+**Developed by eLsann**
+<br>
+&copy; 2026 All Rights Reserved.
+
+</div>
