@@ -1,4 +1,22 @@
 import os
+import sys
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller onefile
+        base_path = sys._MEIPASS
+    except Exception:
+        # PyInstaller onedir or Dev
+        base_path = os.path.abspath(".")
+        
+        # Check for _internal folder (PyInstaller 6+ onedir default)
+        internal_path = os.path.join(base_path, "_internal")
+        if os.path.exists(internal_path):
+            base_path = internal_path
+
+    return os.path.join(base_path, relative_path)
+
 from PySide6.QtWidgets import (
     QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget,
     QLineEdit, QFormLayout, QMessageBox, QListWidget, QListWidgetItem,
@@ -153,6 +171,11 @@ QSpinBox {{
     border: 1px solid {COLORS['border']};
     border-radius: 8px;
     padding: 8px;
+    min-width: 80px;
+}}
+QSpinBox::up-button, QSpinBox::down-button {{
+    width: 0px; 
+    border: none;
 }}
 
 QScrollBar:vertical {{
@@ -426,7 +449,7 @@ class MainUI(QWidget):
     
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Absensi Desktop - Modern Dashboard")
+        self.setWindowTitle("Absensi Desktop")
         self.setMinimumSize(800, 500)  # Smaller minimum for flexibility
         self.setStyleSheet(STYLESHEET)
         
@@ -467,9 +490,7 @@ class MainUI(QWidget):
         title_layout.setSpacing(10)
         
         logo = QLabel()
-        logo_path = "assets/logo.png"
-        if not os.path.exists(logo_path):
-            logo_path = "logo.png"  # Fallback to current dir if not found
+        logo_path = resource_path("assets/logo.png")
             
         if os.path.exists(logo_path):
             pix = QPixmap(logo_path)
@@ -580,8 +601,7 @@ class MainUI(QWidget):
         top_bar.setSpacing(10)
         
         # Logo
-        import os
-        logo_path = os.path.join(os.path.dirname(__file__), "logo.png")
+        logo_path = resource_path("assets/logo.png")
         self.logo_label = QLabel()
         self.logo_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         if os.path.exists(logo_path):
@@ -603,7 +623,6 @@ class MainUI(QWidget):
         
         # Controls
         self.btn_toggle = AnimatedButton("▶ Mulai", color=COLORS['success'])
-        # self.btn_toggle.setStyleSheet(f"background: {COLORS['success']}; font-size: 11px; padding: 6px 12px;") # Handled by class
         
         self.btn_mirror = QPushButton("🔄")
         self.btn_mirror.setProperty("class", "secondary")
