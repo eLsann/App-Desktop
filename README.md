@@ -1,4 +1,4 @@
-# 📸 Absensi Desktop
+# Absensi Desktop
 
 <div align="center">
 
@@ -16,10 +16,10 @@
 
 ---
 
-## ✨ Overview
+## Overview
 **Absensi Desktop** is a modern attendance application designed for seamless user experiences. Powered by advanced computer vision, it enables touchless check-ins with real-time verification and smart voice greetings.
 
-### 🚀 Key Features
+### Key Features
 *   **👁️ Smart Recognition**: Detects and verifies faces in milliseconds.
 *   **🎨 Modern UI**: Dark-themed, responsive interface built with PySide6.
 *   **📊 Live Dashboard**: Real-time statistics for daily check-ins, lates, and absentees.
@@ -28,7 +28,7 @@
 
 ---
 
-## � Installation Guide
+## Installation Guide
 
 Getting started is easy. Follow these steps to install the application on your **Windows** machine:
 
@@ -51,22 +51,12 @@ Open **Absensi Desktop** from your Start Menu or Desktop shortcut.
 
 ---
 
-## �️ Technology Stack
+## Technology Stack
 Built with robust modern technologies:
 *   **Core**: Python 3.10
 *   **GUI**: PySide6 (Qt)
 *   **Vision**: OpenCV & MediaPipe
 *   **Packaging**: PyInstaller & Inno Setup
-
----
-
-## 🤝 Contribution
-Contributions are welcome! If you have ideas for improvements:
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
 
 ---
 
