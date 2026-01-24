@@ -1,4 +1,4 @@
-# Absensi Desktop
+# 📸 Absensi Desktop
 
 <div align="center">
 
@@ -9,56 +9,126 @@
 
 **Intelligent Face Recognition Attendance System**
 <br>
-*Fast. Secure. Touchless.*
+*Fast. Secure. Seamless.*
 
-[📥 **Download & Install (Windows)**](https://github.com/eLsann/App-Desktop/releases/latest)
-<br>
-<a href="#-developer-setup">View Developer Guide</a>
+[📥 **Download for Windows**](https://github.com/eLsann/App-Desktop/releases/latest)
+·
+[🐛 **Report Bug**](https://github.com/eLsann/App-Desktop/issues)
+·
+[📜 **View License**](LICENSE)
 
 </div>
 
 ---
 
-## Overview
-**Absensi Desktop** is a modern attendance application designed for seamless user experiences. Powered by advanced computer vision, it enables touchless check-ins with real-time verification and smart voice greetings.
+## ✨ Overview
 
-### Key Features
-*   **👁️ Smart Recognition**: Detects and verifies faces in milliseconds.
-*   **🎨 Modern UI**: Dark-themed, responsive interface built with PySide6.
-*   **📊 Live Dashboard**: Real-time statistics for daily check-ins, lates, and absentees.
-*   **🎙️ Interactive Voice**: Personalized greetings using Text-to-Speech (TTS).
-*   **🔐 Admin Suite**: Secure management for user data and attendance logs.
+**Absensi Desktop** reinvents attendance tracking by combining advanced computer vision with a modern, frictionless user experience. Designed for efficiency, it allows users to check in simply by looking at the camera—no touching, no cards, no hassle.
+
+![Preview](https://via.placeholder.com/800x400.png?text=Absensi+Desktop+Dashboard+Preview)
+*(Replace with actual screenshot)*
 
 ---
 
-## Installation Guide
+## 🚀 Key Features
 
-Getting started is easy. Follow these steps to install the application on your **Windows** machine:
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <h1>👁️</h1>
+      <h3>Smart Vision</h3>
+      <p>High-speed face detection and recognition powered by OpenCV.</p>
+    </td>
+    <td align="center" width="33%">
+      <h1>🎨</h1>
+      <h3>Modern UX</h3>
+      <p>Beautiful dark-themed interface built with PySide6 (Qt).</p>
+    </td>
+    <td align="center" width="33%">
+      <h1>📊</h1>
+      <h3>Live Stats</h3>
+      <p>Real-time analytics dashboard for daily attendance metrics.</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <h1>🎙️</h1>
+      <h3>Voice AI</h3>
+      <p>Interactive Text-to-Speech greetings for a personal touch.</p>
+    </td>
+    <td align="center" width="33%">
+      <h1>🔐</h1>
+      <h3>Secure Admin</h3>
+      <p>Protected area for user management and data export.</p>
+    </td>
+    <td align="center" width="33%">
+      <h1>⚙️</h1>
+      <h3>Flexible</h3>
+      <p>Customizable settings for cameras, APIs, and device identity.</p>
+    </td>
+  </tr>
+</table>
 
-### 1. Download
-Click the button below to download the official installer (`.exe`) from our Releases page:
+---
 
-<a href="https://github.com/eLsann/App-Desktop/releases/latest">
-  <img src="https://img.shields.io/badge/Download_Installer-v1.0.0-2563EB?style=for-the-badge&logo=windows&logoColor=white" height="40">
-</a>
+## 🛠️ Technology Stack
+
+We use industry-standard technologies to ensure reliability and performance:
+
+<div align="center">
+
+| Core | GUI | Vision | Tools |
+| :---: | :---: | :---: | :---: |
+| ![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white) | ![Qt](https://img.shields.io/badge/Qt-PySide6-41CD52?style=for-the-badge&logo=qt&logoColor=white) | ![OpenCV](https://img.shields.io/badge/OpenCV-Computer_Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white) | ![Git](https://img.shields.io/badge/Git-Versioning-F05032?style=for-the-badge&logo=git&logoColor=white) |
+
+</div>
+
+---
+
+## 📦 Installation Guide
+
+<details open>
+<summary><b>🔥 Quick Install (Recommended)</b></summary>
+
+1.  **Download**
+    <br>
+    <a href="https://github.com/eLsann/App-Desktop/releases/latest">
+      <img src="https://img.shields.io/badge/Download_Installer-v1.0.0-2563EB?style=for-the-badge&logo=windows&logoColor=white" height="50">
+    </a>
 
 2.  **Install**
-    *   Run `AbsensiDesktop_Setup.exe`.
-    *   Follow the setup wizard.
-    *   (Optional) If Windows SmartScreen appears, click **More info** > **Run anyway**.
+    Double-click `AbsensiDesktop_Setup.exe` and follow the wizard.
 
-3.  **Launch**
-    *   Open **Absensi Desktop** from your Desktop shortcut.
-    *   Enjoy seamless attendance!
+3.  **Run**
+    Open **Absensi Desktop** from your start menu.
 
----
+</details>
 
-## Technology Stack
-Built with robust modern technologies:
-*   **Core**: Python 3.10
-*   **GUI**: PySide6 (Qt)
-*   **Vision**: OpenCV & MediaPipe
-*   **Packaging**: PyInstaller & Inno Setup
+<details>
+<summary><b>🛠️ Developer Setup (Build from Source)</b></summary>
+
+Prerequisites: Python 3.10+, Git.
+
+```bash
+# 1. Clone Repository
+git clone https://github.com/eLsann/App-Desktop.git
+cd App-Desktop
+
+# 2. Setup Environment
+python -m venv app.venv
+app.venv\Scripts\activate
+
+# 3. Install Dependencies
+pip install -r requirements.txt
+
+# 4. Configure
+cp .env.example .env
+# Edit .env with your API details
+
+# 5. Run Application
+python app.py
+```
+</details>
 
 ---
 
