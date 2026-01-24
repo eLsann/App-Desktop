@@ -13,8 +13,6 @@
 [📥 **Download for Windows**](https://github.com/eLsann/App-Desktop/releases/latest)
 ·
 [🐛 **Report Bug**](https://github.com/eLsann/App-Desktop/issues)
-·
-[📜 **View License**](LICENSE)
 
 </div>
 
