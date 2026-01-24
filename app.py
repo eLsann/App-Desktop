@@ -65,7 +65,7 @@ class DesktopApp:
         # Load config
         self.api_base = os.getenv("API_BASE", "http://localhost:8000")
         self.device_id = os.getenv("DEVICE_ID", "stb-01")
-        self.device_token = os.getenv("DEVICE_TOKEN", "87654321")
+        self.device_token = os.getenv("DEVICE_TOKEN") or "87654321"
         self.cam_index = int(os.getenv("CAM_INDEX", "0"))
         self.request_interval = float(os.getenv("REQUEST_INTERVAL", "1.5"))
         
@@ -73,7 +73,7 @@ class DesktopApp:
         max_fps = int(os.getenv("MAX_FPS", "30"))
         api_timeout = float(os.getenv("API_TIMEOUT", "15"))
         
-        logger.info(f"Config: API={self.api_base}, Device={self.device_id}")
+        logger.info(f"Config: API={self.api_base}, Device={self.device_id}, Token={self.device_token[:4]}***")
         
         # Initialize components
 
