@@ -65,6 +65,9 @@ class DesktopApp:
         # Load config
         self.api_base = os.getenv("API_BASE", "http://localhost:8000")
         self.device_id = os.getenv("DEVICE_ID", "stb-01")
+        if self.device_id == "YOUR_DEVICE_ID":
+             self.device_id = "stb-01"
+
         self.device_token = os.getenv("DEVICE_TOKEN") or "87654321"
         self.cam_index = int(os.getenv("CAM_INDEX", "0"))
         self.request_interval = float(os.getenv("REQUEST_INTERVAL", "1.5"))

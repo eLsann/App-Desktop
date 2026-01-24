@@ -513,7 +513,7 @@ class MainUI(QWidget):
         
         # Settings Button
         self.btn_settings = QPushButton("⚙️")
-        self.btn_settings.setFixedSize(40, 40)
+        self.btn_settings.setFixedSize(50, 50)
         self.btn_settings.setCursor(Qt.PointingHandCursor)
         self.btn_settings.setStyleSheet(f"""
             QPushButton {{
