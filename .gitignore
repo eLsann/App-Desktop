@@ -31,4 +31,14 @@ tts_cache/
 offline_queue/
 
 # Workspace files
+# Workspace files
 *.code-workspace
+
+# Build Artifacts
+build/
+dist/
+*.spec
+
+# Release Binaries
+installer/
+Release/
