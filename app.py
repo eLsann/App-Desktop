@@ -11,7 +11,8 @@ from dotenv import load_dotenv
 
 from PySide6.QtWidgets import QApplication, QTableWidgetItem
 from PySide6.QtCore import QTimer, Qt
-from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtGui import QImage, QPixmap, QIcon
+import sys
 
 from ui import MainUI
 from camera import CameraFaceCropper
@@ -21,6 +22,23 @@ from logger_config import get_logger
 from settings_dialog import SettingsDialog
 
 logger = get_logger("app")
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller onefile
+        base_path = sys._MEIPASS
+    except Exception:
+        # PyInstaller onedir or Dev
+        base_path = os.path.abspath(".")
+        
+        # Check for _internal folder (PyInstaller 6+ onedir default)
+        internal_path = os.path.join(base_path, "_internal")
+        if os.path.exists(internal_path):
+            base_path = internal_path
+
+    return os.path.join(base_path, relative_path)
 
 
 def bgr_to_qpixmap(frame_bgr):
@@ -60,6 +78,12 @@ class DesktopApp:
         # Initialize components
 
         self.ui = MainUI()
+        
+        # Set App Icon
+        icon_path = resource_path("assets/icon.ico")
+        if os.path.exists(icon_path):
+            self.ui.setWindowIcon(QIcon(icon_path))
+        
         self.cam = CameraFaceCropper(self.cam_index) # Initialize camera once, but don't open yet
         self.client = ApiClient(self.api_base, self.device_id, self.device_token, timeout=api_timeout)
         self.tts = TTSEngine(TTSConfig(edge_voice=voice))
@@ -514,13 +538,6 @@ class DesktopApp:
         self._update_stat_cards()
         
         # TTS - use speak_once with cooldown
-        if self.tts:
-            try:
-                # Do NOT track unknown count in stats anymore
-                pass
-            except Exception as e:
-                pass
-        
         if self.tts:
             try:
                 self.tts.speak_once("combined", combined_audio, cooldown=5.0)
