@@ -25,9 +25,6 @@
 
 **Absensi Desktop** reinvents attendance tracking by combining advanced computer vision with a modern, frictionless user experience. Designed for efficiency, it allows users to check in simply by looking at the camera—no touching, no cards, no hassle.
 
-![Preview](https://via.placeholder.com/800x400.png?text=Absensi+Desktop+Dashboard+Preview)
-*(Replace with actual screenshot)*
-
 ---
 
 ## 🚀 Key Features
@@ -134,7 +131,7 @@ python app.py
 
 <div align="center">
 
-**Developed with ❤️ by eLsann**
+**Developed with by eLsann**
 <br>
 &copy; 2026 All Rights Reserved.
 
