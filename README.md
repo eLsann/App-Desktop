@@ -2,77 +2,119 @@
 
 <div align="center">
 
-[![Release](https://img.shields.io/github/v/release/eLsann/App-Desktop?style=for-the-badge&color=2563EB)](https://github.com/eLsann/App-Desktop/releases/latest)
+[![Release](https://img.shields.io/github/v/release/eLsann/App-Desktop?style=for-the-badge&color=2563EB&label=Stable%20Release)](https://github.com/eLsann/App-Desktop/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows)](https://github.com/eLsann/App-Desktop/releases)
+[![Python](https://img.shields.io/badge/Python-3.10-EF4444?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-**Next-Generation Face Recognition Attendance System**
+**Intelligent Face Recognition Attendance System**
 <br>
-*Fast, Accurate, and Secure.*
+*Fast. Secure. Touchless.*
 
-[📥 **Download Latest Installer**](https://github.com/eLsann/App-Desktop/releases/latest)
+[📥 **Download & Install (Windows)**](https://github.com/eLsann/App-Desktop/releases/latest)
+<br>
+<a href="#-developer-setup">View Developer Guide</a>
 
 </div>
 
 ---
 
 ## ✨ Overview
-**Absensi Desktop** is a modern attendance application designed for seamless user experiences. Powered by advanced computer vision, it enables touchless check-ins with real-time verification and smart voice greetings.
+**Absensi Desktop** is an enterprise-grade attendance solution designed for the modern era. Leveraging advanced computer vision, it provides a seamless, touch-free check-in experience. Built with performance and user experience in mind, it combines robust backend processing with a sleek, dark-themed interface.
 
-### 🚀 Key Features
-*   **👁️ Smart Recognition**: Detects and verifies faces in milliseconds.
-*   **🎨 Modern UI**: Dark-themed, responsive interface built with PySide6.
-*   **📊 Live Dashboard**: Real-time statistics for daily check-ins, lates, and absentees.
-*   **🎙️ Interactive Voice**: Personalized greetings using Text-to-Speech (TTS).
-*   **🔐 Admin Suite**: Secure management for user data and attendance logs.
+![Preview](https://via.placeholder.com/800x400.png?text=Dashboard+Preview+Placeholder)
+*(Add your application screenshot here)*
 
----
+## 🚀 Key Features
 
-## � Installation Guide
-
-Getting started is easy. Follow these steps to install the application on your **Windows** machine:
-
-### 1. Download
-Click the button below to download the official installer (`.exe`) from our Releases page:
-
-<a href="https://github.com/eLsann/App-Desktop/releases/latest">
-  <img src="https://img.shields.io/badge/Download_Installer-v1.0.0-2563EB?style=for-the-badge&logo=windows&logoColor=white" height="40">
-</a>
-
-### 2. Install
-*   Run the file `AbsensiDesktop_Setup.exe`.
-*   Follow the on-screen instructions.
-*   The app will automatically install required dependencies.
-
-> **Note**: If you see a "Windows protected your PC" popup, click **More info** -> **Run anyway**. This happens because the app certificate is self-signed.
-
-### 3. Launch
-Open **Absensi Desktop** from your Start Menu or Desktop shortcut.
+| Feature | Description |
+| :--- | :--- |
+| **👁️ Smart Vision** | Detects and identifies faces in milliseconds with high accuracy. |
+| **🎨 Modern UI/UX** | Dark-themed, responsive interface built with PySide6 for optimal readability. |
+| **📊 Live Analytics** | Real-time dashboard usage stats, daily check-ins, and late arrivals. |
+| **🎙️ Voice Interaction** | Natural CLI-based Text-to-Speech (TTS) for personalized greetings. |
+| **🔐 Admin Suite** | Secure area for managing personnel, reviewing logs, and exporting data. |
+| **⚙️ Custom Config** | Adjustable camera settings, API endpoints, and device IDs. |
 
 ---
 
-## �️ Technology Stack
-Built with robust modern technologies:
+## 📦 Installation Guide (For Users)
+
+Get started in 3 simple steps:
+
+1.  **Download**
+    Click the button below to get accompanying installer from our Releases page:
+    <br>
+    <a href="https://github.com/eLsann/App-Desktop/releases/latest">
+      <img src="https://img.shields.io/badge/Download_v1.0.0-2563EB?style=for-the-badge&logo=windows&logoColor=white" height="45">
+    </a>
+
+2.  **Install**
+    *   Run `AbsensiDesktop_Setup.exe`.
+    *   Follow the setup wizard.
+    *   (Optional) If Windows SmartScreen appears, click **More info** > **Run anyway**.
+
+3.  **Launch**
+    *   Open **Absensi Desktop** from your Desktop shortcut.
+    *   Enjoy seamless attendance!
+
+---
+
+## 🛠️ Developer Setup
+
+If you want to contribute or build from source, follow these steps:
+
+### Prerequisites
+*   Python 3.10+
+*   Git
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/eLsann/App-Desktop.git
+cd App-Desktop
+```
+
+### 2. Virtual Environment
+```bash
+python -m venv app.venv
+# Activate:
+# Windows:
+app.venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configuration
+Rename `.env.example` to `.env` and configure your settings:
+```ini
+API_BASE=http://localhost:8000
+DEVICE_ID=my-device-01
+CAM_INDEX=0
+```
+
+### 5. Run
+```bash
+python app.py
+```
+
+---
+
+## 🧩 Technology Stack
+
 *   **Core**: Python 3.10
-*   **GUI**: PySide6 (Qt)
-*   **Vision**: OpenCV & MediaPipe
-*   **Packaging**: PyInstaller & Inno Setup
-
----
-
-## 🤝 Contribution
-Contributions are welcome! If you have ideas for improvements:
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+*   **GUI Framework**: PySide6 (Qt)
+*   **Computer Vision**: OpenCV, MediaPipe
+*   **Networking**: Requests (REST API)
+*   **Distribution**: PyInstaller, Inno Setup 6
 
 ---
 
 <div align="center">
 
-**Developed by eLsann**
+**Developed with ❤️ by eLsann**
 <br>
 &copy; 2026 All Rights Reserved.
 
