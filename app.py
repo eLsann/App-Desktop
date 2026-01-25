@@ -63,8 +63,8 @@ class DesktopApp:
         load_dotenv()
         
         # Load config
-        self.api_base = os.getenv("API_BASE", "http://localhost:8000")
-        self.device_id = os.getenv("DEVICE_ID", "stb-01")
+        self.api_base = (os.getenv("API_BASE") or "http://localhost:8000").strip()
+        self.device_id = (os.getenv("DEVICE_ID") or "stb-01").strip()
         if self.device_id == "YOUR_DEVICE_ID":
              self.device_id = "stb-01"
 
