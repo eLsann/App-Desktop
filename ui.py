@@ -511,27 +511,6 @@ class MainUI(QWidget):
         layout.addStretch()
         layout.addWidget(self.lbl_status)
         
-        # Settings Button
-        self.btn_settings = QPushButton("⚙️")
-        self.btn_settings.setFixedSize(50, 50)
-        self.btn_settings.setToolTip("Menu Pengaturan")
-        self.btn_settings.setCursor(Qt.PointingHandCursor)
-        self.btn_settings.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {COLORS['surface']};
-                border: 1px solid {COLORS['border']};
-                border-radius: 8px;
-                font-size: 18px;
-                color: {COLORS['text_secondary']};
-            }}
-            QPushButton:hover {{
-                background-color: {COLORS['bg']};
-                color: {COLORS['text_primary']};
-                border-color: {COLORS['primary']};
-            }}
-        """)
-        layout.addWidget(self.btn_settings)
-        
         return header
     
     def _create_dashboard_tab(self) -> QWidget:
