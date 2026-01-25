@@ -7,19 +7,28 @@ import time
 import threading
 import cv2
 import queue
+import sys
 from dotenv import load_dotenv
 
-from PySide6.QtWidgets import QApplication, QTableWidgetItem
+# Fix dotenv loading for frozen app
+if getattr(sys, 'frozen', False):
+    # If frozen, look for .env in the same folder as the executable
+    app_dir = os.path.dirname(sys.executable)
+    env_path = os.path.join(app_dir, '.env')
+    load_dotenv(env_path)
+else:
+    load_dotenv()
+
+from PySide6.QtWidgets import QApplication, QTableWidgetItem, QMessageBox
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QImage, QPixmap, QIcon
-import sys
 
 from ui import MainUI
 from camera import CameraFaceCropper
 from api_client import ApiClient
 from tts_engine import TTSEngine, TTSConfig
 from logger_config import get_logger
-from settings_dialog import SettingsDialog
+from logger_config import get_logger
 
 logger = get_logger("app")
 
@@ -179,8 +188,6 @@ class DesktopApp:
         self.ui.btn_report.clicked.connect(self.load_report)
         self.ui.btn_export_csv.clicked.connect(self.export_csv)
         
-        # Settings
-        self.ui.btn_settings.clicked.connect(self.open_settings)
         self.ui.btn_refresh_stats.clicked.connect(self.refresh_stats)
         
         logger.debug("Signals connected")
@@ -945,21 +952,7 @@ class DesktopApp:
         except Exception as e:
             self.ui.error("Export", str(e))
     
-    def open_settings(self):
-        """Open settings dialog"""
-        dialog = SettingsDialog(self)
-        if dialog.exec():
-            # If accepted (saved), restart app to apply changes
-            self.restart_app()
 
-    def restart_app(self):
-        """Restart the application"""
-        import sys
-        import os
-        logger.info("Restarting application...")
-        self.cleanup()
-        # Re-execute the current process
-        os.execl(sys.executable, sys.executable, *sys.argv)
 
     def _sync_offline_queue(self):
         """Sync offline queue in background"""
@@ -1009,6 +1002,15 @@ def main():
     
     try:
         desktop = DesktopApp()
+        
+        # Check if running with default config
+        token = os.getenv("DEVICE_TOKEN", "")
+        if "YOUR_DEVICE_TOKEN" in token or not token:
+            QMessageBox.warning(None, "Konfigurasi Diperlukan", 
+                "Aplikasi belum dikonfigurasi!\n\n"
+                "Silakan edit file .env di folder aplikasi dan masukkan DEVICE_ID serta DEVICE_TOKEN yang benar.\n"
+                "Atau gunakan menu Settings (jika tersedia) untuk mengubah konfigurasi.")
+            
         desktop.ui.show()
         logger.info("Application window displayed")
         
